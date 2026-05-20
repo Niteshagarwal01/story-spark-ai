@@ -2,6 +2,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Post } from "../../models/post";
 import LoadingAnimation from "../loading/loading.component";
+import { useToggleReactionMutation } from "../../redux/apis/reaction.api";
+import { toast } from "react-hot-toast";
+import { getUserInfo } from "../../services/auth.service";
+
+import BookmarkButton from "../BookmarkButton";
 
 interface IExploreViewListComponentProps {
   posts: Post[];
@@ -13,6 +18,19 @@ const ExploreViewListComponent: React.FC<IExploreViewListComponentProps> = ({
   isLoading,
 }) => {
   const navigate = useNavigate();
+  const [toggleReaction] = useToggleReactionMutation();
+  const currentUser = getUserInfo();
+
+  const handleLike = async (e: React.MouseEvent, postId: string) => {
+    e.stopPropagation();
+    try {
+      await toggleReaction({ postId }).unwrap();
+    } catch (error) {
+      console.error("Failed to toggle reaction", error);
+      toast.error("You need to login to perform this action");
+    }
+  };
+
   if (isLoading) {
     return <LoadingAnimation />;
   }
@@ -40,6 +58,7 @@ const ExploreViewListComponent: React.FC<IExploreViewListComponentProps> = ({
                 <p className="text-sm text-slate-400 mb-6 line-clamp-2 flex-1 leading-relaxed">
                   {story.content.slice(0, 100)}...
                 </p>
+<<<<<<< HEAD
                 <div className="flex items-center justify-between text-sm text-slate-500 border-t border-slate-700/50 pt-4 mt-auto">
                   <div className="flex items-center gap-4">
                     <button className="flex items-center gap-1.5 hover:text-red-400 transition-colors group/btn" aria-label="Like story">
@@ -53,7 +72,25 @@ const ExploreViewListComponent: React.FC<IExploreViewListComponentProps> = ({
                   </div>
                   <button className="hover:text-blue-400 transition-colors" aria-label="Bookmark story">
                     <i className="far fa-bookmark"></i>
+=======
+                <div className="flex items-center text-sm text-gray-500">
+                  <button 
+                    onClick={(e) => handleLike(e, story._id as string)}
+                    className={`!rounded-button flex items-center space-x-1 hover:text-gray-400 border px-3 py-1 cursor-pointer transition-colors ${
+                      story.reactions?.some((r: any) => r.userId?.email === currentUser?.email)
+                        ? "text-red-500 border-red-500/50 bg-red-500/10 hover:text-red-400"
+                        : ""
+                    }`}
+                  >
+                    <i className={`${story.reactions?.some((r: any) => r.userId?.email === currentUser?.email) ? 'fas' : 'far'} fa-heart`}></i>
+                    <span>{story.likesCount || 0}</span>
                   </button>
+                  <button className="ml-2 !rounded-button flex items-center space-x-1 cursor-pointer hover:text-gray-400 border px-3 py-1">
+                    <i className="far fa-comment"></i>
+                    <span>{story.commentsCount || 0}</span>
+>>>>>>> upstream/main
+                  </button>
+                  <BookmarkButton storyId={story._id as string} bookmarks={story.bookmarks} className="ml-auto" />
                 </div>
               </div>
             </div>

@@ -7,6 +7,7 @@ import {
   useGoogleLoginMutation,
 } from "../../redux/apis/auth.api";
 import { storeUserInfo, getUserInfo } from "../../services/auth.service";
+import { USER_ROLE } from "../../constants/role";
 import RedirectComponent from "../redirect.component";
 import toast, { Toaster } from "react-hot-toast";
 import { GoogleLogin } from "@react-oauth/google";
@@ -96,8 +97,8 @@ const LoginComponent = () => {
     const userInfo = getUserInfo();
 
     const isDashboardUser =
-      userInfo?.role === "admin" ||
-      userInfo?.role === "super_admin";
+      userInfo?.role === USER_ROLE.ADMIN ||
+      userInfo?.role === USER_ROLE.SUPER_ADMIN;
 
     return (
       <RedirectComponent
